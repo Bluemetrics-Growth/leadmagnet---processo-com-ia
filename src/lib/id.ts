@@ -1,0 +1,8 @@
+/** Gerador de ids curtos, suficiente para entidades locais do diagnóstico. */
+export function makeId(prefix = "id"): string {
+  const rand =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID().slice(0, 8)
+      : Math.random().toString(36).slice(2, 10);
+  return `${prefix}_${rand}`;
+}

@@ -1,0 +1,244 @@
+/* =========================================================================
+   BlueMetrics Design System — Colors & Type
+   Foundation tokens, Apple-inspired layout rules, BlueMetrics brand palette.
+   ========================================================================= */
+
+/* Webfonts — Outfit (display) + Wix Madefor Text (body), both self-hosted from /fonts. */
+
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-100.ttf') format('truetype');     font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-200.ttf') format('truetype');     font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-300.ttf') format('truetype');     font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-500.ttf') format('truetype');     font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-600.ttf') format('truetype');     font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-700.ttf') format('truetype');     font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-800.ttf') format('truetype');     font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Outfit'; src: url('fonts/Outfit-900.ttf') format('truetype');     font-weight: 900; font-style: normal; font-display: swap; }
+
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-Regular.ttf')    format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-Italic.ttf')     format('truetype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-500.ttf')        format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-500italic.ttf')  format('truetype'); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-600.ttf')        format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-600italic.ttf')  format('truetype'); font-weight: 600; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-700.ttf')        format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-700italic.ttf')  format('truetype'); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-800.ttf')        format('truetype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Wix Madefor Text'; src: url('fonts/Wix_Madefor_Text-800italic.ttf')  format('truetype'); font-weight: 800; font-style: italic; font-display: swap; }
+
+:root {
+  /* ===================== BRAND COLORS (from brand-guidelines.pdf) ======= */
+
+  /* Primary — the BM core */
+  --bm-blue:        #0c27e8;   /* "blue"        — PANTONE 2728 C  */
+  --bm-deep-blue:   #030a8b;   /* "deep blue"   — PANTONE 2738 C  */
+  --bm-black:       #162132;   /* near-black support color (PANTONE 433 C) */
+
+  /* Support palette — used sparingly for data viz, accents, status. */
+  --bm-mint:        #bee0e3;   /* PANTONE 7457 C */
+  --bm-cyan:        #00bbff;   /* PANTONE 306 C  */
+  --bm-green:       #00d100;   /* PANTONE 802 C  */
+  --bm-yellow:      #caca00;   /* PANTONE 7758 C */
+  --bm-purple:      #7b00dc;   /* PANTONE 266 C  */
+  --bm-magenta:     #f100a0;   /* PANTONE 225 C  */
+  --bm-orange:      #ff4400;   /* PANTONE 1655 C */
+
+  /* ===================== NEUTRALS (Apple-style grays) =================== */
+  /* Apple.com uses an extremely tight neutral ramp — almost-white card
+     fills (#f5f5f7), near-black ink (#1d1d1f), and one mid-gray for
+     secondary text. We mirror that scale so the BlueMetrics blue can
+     pop against generous whitespace. */
+  --neutral-0:    #ffffff;     /* page background, primary surface       */
+  --neutral-50:   #fbfbfd;     /* off-white section background            */
+  --neutral-100:  #f5f5f7;     /* card fill, "stage" background           */
+  --neutral-200:  #ececef;     /* dividers, hairline rules                */
+  --neutral-300:  #d2d2d7;     /* input borders, disabled fills           */
+  --neutral-400:  #a1a1a6;     /* placeholder text                        */
+  --neutral-500:  #6e6e73;     /* secondary / muted text                  */
+  --neutral-700:  #424245;     /* tertiary headings                       */
+  --neutral-900:  #1d1d1f;     /* primary ink                             */
+
+  /* ===================== SEMANTIC TOKENS ================================ */
+  --bg:           var(--neutral-0);
+  --bg-soft:      var(--neutral-50);
+  --bg-stage:     var(--neutral-100);   /* the famous Apple "card" gray   */
+  --bg-dark:      #06060a;              /* full-bleed dark hero panels    */
+
+  --fg-1:         var(--neutral-900);   /* primary text                   */
+  --fg-2:         var(--neutral-500);   /* secondary text                 */
+  --fg-3:         var(--neutral-400);   /* tertiary / hints               */
+  --fg-on-dark:   #f5f5f7;
+  --fg-on-dark-2: rgba(245, 245, 247, 0.72);
+
+  --link:           var(--bm-blue);
+  --link-hover:     #0a1fc4;            /* slightly darker on hover       */
+
+  --border:         var(--neutral-200);
+  --border-strong:  var(--neutral-300);
+
+  --accent:         var(--bm-blue);
+  --accent-deep:    var(--bm-deep-blue);
+  --accent-soft:    rgba(12, 39, 232, 0.08);
+
+  --success:        var(--bm-green);
+  --info:           var(--bm-cyan);
+  --warning:        var(--bm-yellow);
+  --danger:         var(--bm-orange);
+
+  /* ===================== TYPOGRAPHY ===================================== */
+  /* Headings — Outfit (geometric, technical, matches the wordmark vibe).
+     Body   — Wix Madefor Text (highly legible at small sizes).
+     Mono   — system mono for code blocks. */
+  --font-display: 'Outfit', 'SF Pro Display', -apple-system, BlinkMacSystemFont,
+                  'Segoe UI', system-ui, sans-serif;
+  --font-body:    'Wix Madefor Text', 'SF Pro Text', -apple-system,
+                  BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+  --font-mono:    'SF Mono', ui-monospace, 'JetBrains Mono', Menlo, Monaco,
+                  Consolas, monospace;
+
+  /* Type ramp — Apple-leaning. Big, bold display sizes; tight body. */
+  --fs-display-xl: clamp(56px, 7vw, 96px);    /* @kind font */
+  --fs-display-l:  clamp(44px, 5vw, 72px);    /* @kind font */
+  --fs-display-m:  clamp(36px, 4vw, 56px);    /* @kind font */
+  --fs-h1:         clamp(32px, 3vw, 48px);     /* @kind font */
+  --fs-h2:         28px;
+  --fs-h3:         21px;
+  --fs-h4:         17px;
+  --fs-body:       17px;          /* Apple uses 17px body almost everywhere */
+  --fs-body-sm:    14px;
+  --fs-eyebrow:    12px;          /* uppercase eyebrow / chip labels       */
+
+  --lh-tight:      1.05;  /* @kind font */
+  --lh-snug:       1.15;  /* @kind font */
+  --lh-body:       1.47;  /* @kind font */
+  --lh-loose:      1.6;   /* @kind font */
+
+  --ls-tight:      -0.02em;       /* @kind font */
+  --ls-snug:       -0.01em;       /* @kind font */
+  --ls-normal:     0;             /* @kind font */
+  --ls-eyebrow:    0.08em;        /* @kind font */
+
+  /* ===================== SPACING & RADII ================================ */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  --radius-xs: 4px;
+  --radius-s:  8px;
+  --radius-m:  12px;
+  --radius-l:  18px;       /* Apple's button/pill radius is generous       */
+  --radius-xl: 28px;       /* big card radius                              */
+  --radius-2xl: 40px;      /* full-bleed hero cards                        */
+  --radius-pill: 980px;    /* the Apple button shape — very large value    */
+
+  /* ===================== ELEVATION ====================================== */
+  /* Apple uses very subtle shadows; we mirror that. */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04),
+              0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.06),
+              0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-3: 0 14px 40px rgba(0, 0, 0, 0.10),
+              0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-blue: 0 12px 32px rgba(12, 39, 232, 0.28);
+
+  /* ===================== MOTION ========================================= */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);   /* @kind other */
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --dur-1: 120ms; /* @kind other */
+  --dur-2: 200ms; /* @kind other */
+  --dur-3: 320ms; /* @kind other */
+  --dur-4: 600ms; /* @kind other */
+
+  /* ===================== LAYOUT ========================================= */
+  --container-narrow: 692px;
+  --container-text:   980px;
+  --container-wide:   1248px;
+  --container-full:   1440px;
+}
+
+/* =========================================================================
+   ELEMENT DEFAULTS — drop colors_and_type.css into a page and these apply.
+   ========================================================================= */
+html, body {
+  background: var(--bg);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--fg-1);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-tight);
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-display-l); letter-spacing: var(--ls-tight); }
+h2 { font-size: var(--fs-display-m); letter-spacing: var(--ls-tight); }
+h3 { font-size: var(--fs-h1); letter-spacing: var(--ls-snug); }
+h4 { font-size: var(--fs-h2); letter-spacing: var(--ls-snug); font-weight: 600; }
+h5 { font-size: var(--fs-h3); font-weight: 600; }
+h6 { font-size: var(--fs-h4); font-weight: 600; }
+
+p {
+  margin: 0;
+  line-height: var(--lh-body);
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color var(--dur-1) var(--ease-standard);
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+small { font-size: var(--fs-body-sm); color: var(--fg-2); }
+
+code, kbd, pre, samp {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+::selection { background: rgba(12, 39, 232, 0.22); color: var(--fg-1); }
+
+/* =========================================================================
+   UTILITY CLASSES — convenience names mapped to the tokens.
+   ========================================================================= */
+.bm-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+
+.bm-display-xl { font-family: var(--font-display); font-size: var(--fs-display-xl);
+                 font-weight: 700; letter-spacing: var(--ls-tight); line-height: var(--lh-tight); }
+.bm-display-l  { font-family: var(--font-display); font-size: var(--fs-display-l);
+                 font-weight: 600; letter-spacing: var(--ls-tight); line-height: var(--lh-tight); }
+.bm-display-m  { font-family: var(--font-display); font-size: var(--fs-display-m);
+                 font-weight: 600; letter-spacing: var(--ls-tight); line-height: var(--lh-snug); }
+.bm-h1         { font-family: var(--font-display); font-size: var(--fs-h1);
+                 font-weight: 600; letter-spacing: var(--ls-snug); }
+.bm-body       { font-family: var(--font-body); font-size: var(--fs-body);
+                 line-height: var(--lh-body); color: var(--fg-1); }
+.bm-body-muted { font-family: var(--font-body); font-size: var(--fs-body);
+                 line-height: var(--lh-body); color: var(--fg-2); }
+.bm-mono       { font-family: var(--font-mono); font-size: var(--fs-body-sm); }

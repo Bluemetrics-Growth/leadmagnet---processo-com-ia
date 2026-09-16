@@ -1,0 +1,273 @@
+/* =========================================================================
+   Camada de aplicação — construída SOBRE os tokens da marca BlueMetrics.
+   Os tokens (--bm-*, --neutral-*, --space-*, --radius-*) vêm de
+   /brand/colors_and_type.css. Aqui só compomos componentes com esses tokens,
+   sem inventar paleta nem tipografia (regras da seção 4.3).
+   O arquivo de tokens é carregado via <link> no layout (/brand/colors_and_type.css),
+   para preservar os caminhos relativos das fontes self-hosted.
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* --- Layout ------------------------------------------------------------- */
+.bm-container {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin: 0 auto;
+  padding-inline: var(--space-5);
+}
+.bm-container-narrow {
+  max-width: var(--container-text);
+}
+
+/* --- Nav (Apple-style translúcido) ------------------------------------- */
+.bm-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.bm-nav-inner {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+.bm-nav img {
+  height: 20px;
+}
+.bm-nav .spacer {
+  flex: 1;
+}
+
+/* --- Botões (pílula, seção preview/buttons) ---------------------------- */
+.btn {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  padding: 12px 22px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--dur-2) var(--ease-standard);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--bm-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--link-hover);
+  color: #fff;
+}
+.btn-secondary {
+  background: #fff;
+  color: var(--bm-blue);
+  border: 1px solid var(--bm-blue);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.btn-tertiary {
+  background: var(--neutral-100);
+  color: var(--neutral-900);
+}
+.btn-tertiary:hover:not(:disabled) {
+  background: var(--neutral-200);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--bm-blue);
+  padding: 10px 12px;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.btn-sm {
+  font-size: var(--fs-body-sm);
+  padding: 8px 16px;
+}
+.btn-danger-ghost {
+  background: transparent;
+  color: var(--danger);
+  padding: 6px 10px;
+}
+.btn-block {
+  width: 100%;
+}
+
+/* --- Chips / badges ----------------------------------------------------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.chip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.chip-blue { background: var(--accent-soft); color: var(--bm-blue); }
+.chip-green { background: rgba(0, 209, 0, 0.14); color: #008000; }
+.chip-orange { background: rgba(255, 68, 0, 0.14); color: #c43200; }
+.chip-cyan { background: rgba(0, 187, 255, 0.16); color: #0072a3; }
+.chip-purple { background: rgba(123, 0, 220, 0.12); color: var(--bm-purple); }
+.chip-gray { background: var(--neutral-100); color: var(--neutral-700); }
+
+/* --- Cards -------------------------------------------------------------- */
+.card {
+  background: #fff;
+  border-radius: var(--radius-l);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--border);
+}
+.card-stage {
+  background: var(--neutral-100);
+  border-radius: var(--radius-l);
+  padding: var(--space-5);
+  border: 1px solid transparent;
+}
+.card-selectable {
+  cursor: pointer;
+  transition: border-color var(--dur-2) var(--ease-standard), box-shadow var(--dur-2) var(--ease-standard),
+    transform var(--dur-2) var(--ease-standard);
+}
+.card-selectable:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-2);
+}
+.card-selected {
+  border-color: var(--bm-blue);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* --- Campos de formulário ---------------------------------------------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.field > label {
+  font-size: var(--fs-eyebrow);
+  color: var(--fg-2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.field input,
+.field select,
+.field textarea {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-m);
+  background: #fff;
+  color: var(--fg-1);
+  outline: none;
+  transition: border var(--dur-1), box-shadow var(--dur-1);
+  width: 100%;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--bm-blue);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.field .input-error {
+  border-color: var(--danger);
+}
+.field .err {
+  color: var(--danger);
+  font-size: var(--fs-body-sm);
+}
+.field .hint {
+  color: var(--fg-2);
+  font-size: var(--fs-body-sm);
+}
+
+/* --- Utilidades --------------------------------------------------------- */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--bm-blue);
+}
+.muted { color: var(--fg-2); }
+.stack { display: flex; flex-direction: column; }
+.stack-1 { gap: var(--space-1); }
+.stack-2 { gap: var(--space-2); }
+.stack-3 { gap: var(--space-3); }
+.stack-4 { gap: var(--space-4); }
+.stack-5 { gap: var(--space-5); }
+.stack-6 { gap: var(--space-6); }
+.row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.row-between { justify-content: space-between; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.grid-auto { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.divider { height: 1px; background: var(--border); border: 0; margin: 0; }
+.text-sm { font-size: var(--fs-body-sm); }
+.text-center { text-align: center; }
+.provenance {
+  font-size: 11px;
+  color: var(--fg-3);
+  letter-spacing: 0.02em;
+}
+
+/* --- Faixa de progresso do wizard -------------------------------------- */
+.progress {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.progress .step {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--neutral-200);
+}
+.progress .step.done { background: var(--bm-blue); }
+.progress .step.active { background: var(--bm-cyan); }
+
+@media (max-width: 720px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .bm-container { padding-inline: var(--space-4); }
+}
+
+/* --- Impressão (versão para salvar em PDF pelo navegador) -------------- */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  .card, .card-stage { box-shadow: none; border: 1px solid var(--border); }
+}
