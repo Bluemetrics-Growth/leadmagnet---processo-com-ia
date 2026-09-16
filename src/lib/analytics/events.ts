@@ -33,7 +33,8 @@ export function track(event: ProductEvent, meta: EventMeta = {}): void {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent("bm:event", { detail: { event, meta: safeMeta } }));
     // Envio best-effort ao backend (Supabase). No-op se não configurado.
-    postBestEffort("/api/events", { event, meta: safeMeta });
+    // Payload pequeno: keepalive garante o envio mesmo durante navegação.
+    postBestEffort("/api/events", { event, meta: safeMeta }, { keepalive: true });
   }
 }
 

@@ -4,14 +4,15 @@
    complemento. Falhas são silenciosas para não bloquear o usuário.
    ========================================================================= */
 
-export function postBestEffort(url: string, body: unknown): void {
+export function postBestEffort(url: string, body: unknown, opts: { keepalive?: boolean } = {}): void {
   if (typeof window === "undefined") return;
   try {
     void fetch(url, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
-      keepalive: true,
+      // keepalive tem limite de 64KB de corpo; usar só em payloads pequenos.
+      keepalive: opts.keepalive ?? false,
     }).catch(() => {});
   } catch {
     /* ignore */
