@@ -30,7 +30,7 @@ automaticamente (dados marcados como simulados).
 ## Estrutura
 
 ```
-src/app            Rotas (capa, /mapa/[id], /admin, /api/*)
+src/app            Rotas (capa, /mapa/[id], /api/*)
 src/components      UI por área (landing, company-context, wizard, process-board,
                    process-graph, activity-editor, opportunities, simulation,
                    lead-capture, result, brand)

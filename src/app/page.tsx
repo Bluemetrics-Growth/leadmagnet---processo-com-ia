@@ -87,11 +87,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <Nav>
-        <a className="btn btn-ghost btn-sm no-print" href="/admin">
-          Área interna
-        </a>
-      </Nav>
+      <Nav />
 
       <main className="bm-container" style={{ paddingBlock: "var(--space-9)" }}>
         <div className="grid-2" style={{ alignItems: "center", gap: "var(--space-8)" }}>

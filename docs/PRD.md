@@ -34,7 +34,8 @@ recorte, Simulação) → T6 captura e exportação → T7 solicitar avaliação
 Incluído: capa com site, consulta Apollo, confirmação/edição de contexto, modelos +
 personalizado, editor de fases/atividades, decisões e retornos simples, recomendações
 determinísticas, comparação atual/proposto, recorte, simulação opcional, captura de
-contato, exportações, solicitação de avaliação, área administrativa, eventos de produto.
+contato, exportações, solicitação de avaliação e eventos de produto. (A gestão de
+leads não é feita no app: os leads ficam no Supabase e serão integrados ao HubSpot.)
 
 Excluído: pessoas no Apollo, contatos/sequências/mensagens, crawling do site, upload de
 documentos, chat aberto, editor BPMN completo, integrações operacionais, execução de

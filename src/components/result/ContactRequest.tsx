@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import type { Diagnostic } from "@/lib/domain/schemas";
-import { makeId } from "@/lib/id";
-import { saveContactRequest } from "@/lib/persistence/store";
 import { track } from "@/lib/analytics/events";
 import { postBestEffort } from "@/lib/client/sync";
 import { PRODUCT } from "@/config/product";
@@ -19,17 +17,7 @@ export function ContactRequest({ diagnostic }: { diagnostic: Diagnostic }) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const scopeText = scope.trim();
-    // Idempotência simples por diagnóstico + recorte (seção 18).
-    saveContactRequest({
-      id: makeId("req"),
-      diagnosticId: diagnostic.id,
-      scope: scopeText,
-      hasProcessOwner: hasOwner,
-      timeline: timeline.trim(),
-      budgetInDiscussion: budget.trim() || null,
-      createdAt: new Date().toISOString(),
-    });
-    // Sincroniza a solicitação (best-effort; idempotente por diagnóstico + recorte).
+    // Solicitação gravada no Supabase (best-effort; idempotente por diagnóstico + recorte).
     postBestEffort(`/api/diagnostics/${diagnostic.id}/contact-request`, {
       diagnostic,
       request: {

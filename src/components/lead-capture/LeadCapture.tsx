@@ -3,8 +3,6 @@
 import { useState } from "react";
 import type { Diagnostic } from "@/lib/domain/schemas";
 import type { EvaluationResult } from "@/lib/domain/recommendations";
-import { makeId } from "@/lib/id";
-import { saveLead } from "@/lib/persistence/store";
 import { diagnosticToMarkdown } from "@/lib/exports/markdown";
 import { diagnosticToJson, downloadFile } from "@/lib/exports/json";
 import { track } from "@/lib/analytics/events";
@@ -49,17 +47,8 @@ export function LeadCapture({ diagnostic, evaluation }: Props) {
     }
     // E-mail digitado não é identidade verificada; apenas normalizamos.
     const normalizedEmail = email.trim().toLowerCase();
-    saveLead({
-      id: makeId("lead"),
-      name: name.trim(),
-      email: normalizedEmail,
-      role: role.trim(),
-      company: company.trim(),
-      diagnosticId: diagnostic.id,
-      createdAt: new Date().toISOString(),
-      allowContact,
-    });
-    // Sincroniza o lead com o Supabase (best-effort; no-op se não configurado).
+    // O lead vai para o Supabase (best-effort; no-op se não configurado).
+    // Não é guardado localmente — a integração comercial é feita no Supabase/HubSpot.
     postBestEffort(`/api/diagnostics/${diagnostic.id}/capture`, {
       diagnostic,
       lead: {

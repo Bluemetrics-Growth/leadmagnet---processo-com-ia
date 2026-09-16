@@ -40,7 +40,8 @@ num banco novo.
 - O acesso privilegiado do backend deve verificar a propriedade da sessão
   explicitamente em cada operação (comparar `diagnostics.session_id` com a sessão
   do cookie), já que a service role ignora RLS.
-- A área administrativa deve usar Supabase Auth + autorização no servidor.
+- Não há painel administrativo no app. Os leads e solicitações ficam no Supabase
+  e serão integrados ao HubSpot numa etapa posterior.
 
 ## Variáveis de ambiente (servidor)
 
@@ -73,7 +74,15 @@ Modelo **offline-first com persistência de conversão no servidor**:
 - Todas as escritas são **best-effort**: sem as variáveis de ambiente, os
   endpoints respondem `persisted:false` e o app segue no modo local, sem quebrar.
 - O id do diagnóstico gerado no cliente é mapeado por `diagnostics.client_ref`.
+- Os leads NÃO são guardados no navegador nem exibidos no app; ficam apenas no
+  Supabase, de onde a integração com o HubSpot vai puxá-los depois.
 
 Migrar TODA a persistência (edição em tempo real) para o servidor continua
 sendo um passo opcional futuro; hoje o dado comercial (leads, solicitações,
 eventos) já fica centralizado no Supabase.
+
+## Próxima etapa: HubSpot
+
+A integração dos leads com o HubSpot será feita a partir do Supabase (ex.: um
+gatilho/rotina lendo `leads` + `lead_diagnostics` + `contact_requests` e criando
+contatos/negócios no HubSpot), sem gestão de leads dentro deste projeto.

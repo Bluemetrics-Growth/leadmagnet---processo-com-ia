@@ -53,13 +53,13 @@ cliente para agenda/LLM usam o prefixo `NEXT_PUBLIC_`. Ajuste conforme o deploy.
 - MVP: os diagnósticos, leads e solicitações ficam no `localStorage` do navegador.
   Recuperação entre dispositivos por e-mail **não** é suportada. Exportação/importação
   JSON permite mover um diagnóstico entre navegadores.
-- Produção: substituir `lib/persistence` e o cache de enriquecimento por Supabase,
-  aplicando RLS nas tabelas expostas e verificação de propriedade no backend.
+- Conversão: leads, solicitações de avaliação e eventos são gravados no Supabase
+  pelas rotas de API (service role). Ver `supabase/README.md`.
 
-## Área interna
+## Leads e HubSpot
 
-`/admin` — visão local (MVP). Em produção, autorização definida no servidor via
-Supabase Auth. Sem ações de prospecção no Apollo.
+Não há painel administrativo no app. Os leads e solicitações ficam no Supabase e
+serão integrados ao HubSpot numa etapa posterior. Este projeto não gerencia leads.
 
 ## Testes críticos
 
