@@ -1,7 +1,9 @@
 /* =========================================================================
    Eventos de produto (seção 21). SEM domínio, e-mail ou texto livre.
-   No MVP, registrados em memória e no console; produção envia a product_events.
+   Registrados em memória e enviados best-effort a /api/events (product_events).
    ========================================================================= */
+
+import { postBestEffort } from "@/lib/client/sync";
 
 export type ProductEvent =
   | "landing_viewed"
@@ -29,8 +31,9 @@ export function track(event: ProductEvent, meta: EventMeta = {}): void {
   const safeMeta = sanitize(meta);
   buffer.push({ event, meta: safeMeta, at: new Date().toISOString() });
   if (typeof window !== "undefined") {
-    // Instrumentação leve; substituível por endpoint /api/events em produção.
     window.dispatchEvent(new CustomEvent("bm:event", { detail: { event, meta: safeMeta } }));
+    // Envio best-effort ao backend (Supabase). No-op se não configurado.
+    postBestEffort("/api/events", { event, meta: safeMeta });
   }
 }
 

@@ -52,10 +52,11 @@ de regras produzem o mesmo `EvaluationResult` (coberto por teste).
 
 ## Endpoints
 
-Ver seção 18 do PRD. Implementados no MVP: `POST /api/company-lookup`,
-`POST /api/import`. Os demais (diagnostics, capture, contact-request, events)
-operam no cliente no MVP e têm contrato preparado para migração ao Supabase
-(`expectedVersion` para conflito, idempotência em captura/solicitação).
+Ver seção 18 do PRD. Implementados: `POST /api/company-lookup`, `POST /api/import`,
+e a persistência de conversão no Supabase (service role, best-effort):
+`POST /api/diagnostics/:id/capture`, `POST /api/diagnostics/:id/contact-request`,
+`POST /api/events`. A edição do diagnóstico permanece no cliente; sem as
+variáveis do Supabase os endpoints respondem `persisted:false` sem quebrar.
 
 ## Caminho para produção (Supabase)
 

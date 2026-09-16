@@ -8,6 +8,7 @@ import { saveLead } from "@/lib/persistence/store";
 import { diagnosticToMarkdown } from "@/lib/exports/markdown";
 import { diagnosticToJson, downloadFile } from "@/lib/exports/json";
 import { track } from "@/lib/analytics/events";
+import { postBestEffort } from "@/lib/client/sync";
 
 interface Props {
   diagnostic: Diagnostic;
@@ -47,15 +48,27 @@ export function LeadCapture({ diagnostic, evaluation }: Props) {
       return;
     }
     // E-mail digitado não é identidade verificada; apenas normalizamos.
+    const normalizedEmail = email.trim().toLowerCase();
     saveLead({
       id: makeId("lead"),
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       role: role.trim(),
       company: company.trim(),
       diagnosticId: diagnostic.id,
       createdAt: new Date().toISOString(),
       allowContact,
+    });
+    // Sincroniza o lead com o Supabase (best-effort; no-op se não configurado).
+    postBestEffort(`/api/diagnostics/${diagnostic.id}/capture`, {
+      diagnostic,
+      lead: {
+        name: name.trim(),
+        email: normalizedEmail,
+        role: role.trim(),
+        company: company.trim(),
+        allowContact,
+      },
     });
     track("lead_capture_submitted", { allowContact });
     setSaved(true);

@@ -62,7 +62,18 @@ ao repositório.
 
 ## Estado atual da aplicação
 
-O app em produção ainda persiste o diagnóstico no navegador (MVP offline-first).
-A troca da persistência para estas tabelas (endpoints de sessão, diagnóstico,
-captura, solicitação e eventos usando a service role) é a Etapa 4 do PRD e o
-próximo passo de integração.
+Modelo **offline-first com persistência de conversão no servidor**:
+
+- O diagnóstico continua sendo editado no navegador (rápido, sem cadastro).
+- Ao converter, o backend grava um snapshot no Supabase via service role:
+  - `POST /api/diagnostics/:id/capture` → sessão + diagnóstico + contexto +
+    versão + `leads` + `lead_diagnostics` + `permissions`.
+  - `POST /api/diagnostics/:id/contact-request` → `contact_requests` (idempotente).
+  - `POST /api/events` → `product_events` (sem texto livre nem dado pessoal).
+- Todas as escritas são **best-effort**: sem as variáveis de ambiente, os
+  endpoints respondem `persisted:false` e o app segue no modo local, sem quebrar.
+- O id do diagnóstico gerado no cliente é mapeado por `diagnostics.client_ref`.
+
+Migrar TODA a persistência (edição em tempo real) para o servidor continua
+sendo um passo opcional futuro; hoje o dado comercial (leads, solicitações,
+eventos) já fica centralizado no Supabase.
