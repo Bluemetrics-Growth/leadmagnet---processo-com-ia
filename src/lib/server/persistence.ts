@@ -1,11 +1,21 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Diagnostic } from "@/lib/domain/schemas";
+import {
+  RULES_VERSION,
+  TEMPLATES_VERSION,
+  type Diagnostic,
+  type DiagnosticStatus,
+} from "@/lib/domain/schemas";
 
 /* =========================================================================
    Persistência de CONVERSÃO no servidor (leads, solicitações, eventos).
    O diagnóstico continua editado no navegador; ao converter, um snapshot é
    gravado no Supabase para satisfazer as FKs e dar contexto ao comercial.
    Verificação de propriedade: tudo é amarrado à sessão do cookie.
+
+   Princípio: o LEAD (contato + consentimento) nunca é perdido por causa do
+   snapshot do diagnóstico. Se o diagnóstico não validar por completo, ainda
+   assim gravamos o lead com um contexto mínimo (client_ref) — a integração
+   comercial (Supabase -> HubSpot) depende do contato, não do grafo.
    ========================================================================= */
 
 const SESSION_TTL_DAYS = 30;
@@ -35,24 +45,13 @@ export async function ensureDiagnosticRow(
   sessionId: string,
   diagnostic: Diagnostic,
 ): Promise<string> {
-  const { data, error } = await client
-    .from("diagnostics")
-    .upsert(
-      {
-        client_ref: diagnostic.id,
-        session_id: sessionId,
-        status: diagnostic.status,
-        process_name: diagnostic.process?.name ?? null,
-        rules_version: diagnostic.rulesVersion,
-        templates_version: diagnostic.templatesVersion,
-        version: diagnostic.version,
-      },
-      { onConflict: "client_ref" },
-    )
-    .select("id")
-    .single();
-  if (error) throw error;
-  const diagnosticId = data.id as string;
+  const diagnosticId = await ensureDiagnosticRowByRef(client, sessionId, diagnostic.id, {
+    status: diagnostic.status,
+    processName: diagnostic.process?.name ?? null,
+    rulesVersion: diagnostic.rulesVersion,
+    templatesVersion: diagnostic.templatesVersion,
+    version: diagnostic.version,
+  });
 
   await client.from("diagnostic_company_context").upsert(
     {
@@ -80,6 +79,76 @@ export async function ensureDiagnosticRow(
   return diagnosticId;
 }
 
+export interface MinimalDiagnosticFields {
+  status?: DiagnosticStatus;
+  processName?: string | null;
+  rulesVersion?: string;
+  templatesVersion?: string;
+  version?: number;
+}
+
+/**
+ * Garante a linha de diagnóstico apenas pelo client_ref, sem depender de um
+ * diagnóstico completo/válido. Usado quando o snapshot não passa na validação
+ * mas ainda precisamos de uma linha para amarrar o lead. Só preenche colunas
+ * NOT NULL com padrões seguros e não sobrescreve com null o que já existe.
+ */
+export async function ensureDiagnosticRowByRef(
+  client: SupabaseClient,
+  sessionId: string,
+  clientRef: string,
+  fields: MinimalDiagnosticFields = {},
+): Promise<string> {
+  const { data, error } = await client
+    .from("diagnostics")
+    .upsert(
+      {
+        client_ref: clientRef,
+        session_id: sessionId,
+        status: fields.status ?? "preliminary",
+        process_name: fields.processName ?? null,
+        rules_version: fields.rulesVersion ?? RULES_VERSION,
+        templates_version: fields.templatesVersion ?? TEMPLATES_VERSION,
+        version: fields.version ?? 0,
+      },
+      { onConflict: "client_ref" },
+    )
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id as string;
+}
+
+/**
+ * Extrai, de um diagnóstico não validado (cru), os campos mínimos seguros para
+ * a linha de diagnóstico. Ignora qualquer coisa fora do formato esperado.
+ */
+export function salvageDiagnosticFields(raw: unknown): MinimalDiagnosticFields {
+  if (typeof raw !== "object" || raw === null) return {};
+  const r = raw as Record<string, unknown>;
+  const out: MinimalDiagnosticFields = {};
+  if (r.status === "preliminary" || r.status === "confirmed") out.status = r.status;
+  if (typeof r.version === "number" && Number.isInteger(r.version) && r.version >= 0) {
+    out.version = r.version;
+  }
+  if (typeof r.rulesVersion === "string" && r.rulesVersion) out.rulesVersion = r.rulesVersion;
+  if (typeof r.templatesVersion === "string" && r.templatesVersion) {
+    out.templatesVersion = r.templatesVersion;
+  }
+  if (typeof r.process === "object" && r.process !== null) {
+    const name = (r.process as Record<string, unknown>).name;
+    if (typeof name === "string" && name) out.processName = name;
+  }
+  return out;
+}
+
+/** Lê um client_ref (id do diagnóstico gerado no cliente) de um payload cru. */
+export function readClientRef(raw: unknown): string | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const id = (raw as Record<string, unknown>).id;
+  return typeof id === "string" && id.length > 0 ? id : null;
+}
+
 export interface LeadInput {
   name: string;
   email: string; // já normalizado (lowercase)
@@ -88,15 +157,12 @@ export interface LeadInput {
   allowContact: boolean;
 }
 
-/** Grava lead + associação + permissão de contato. */
-export async function persistLeadConversion(
+/** Grava lead + associação + permissão de contato para um diagnóstico existente. */
+export async function persistLead(
   client: SupabaseClient,
-  sessionId: string,
-  diagnostic: Diagnostic,
+  diagnosticId: string,
   lead: LeadInput,
 ): Promise<void> {
-  const diagnosticId = await ensureDiagnosticRow(client, sessionId, diagnostic);
-
   const { data: leadRow, error: leadErr } = await client
     .from("leads")
     .upsert(
@@ -122,6 +188,17 @@ export async function persistLeadConversion(
   });
 }
 
+/** Caminho feliz: diagnóstico válido -> snapshot completo + lead. */
+export async function persistLeadConversion(
+  client: SupabaseClient,
+  sessionId: string,
+  diagnostic: Diagnostic,
+  lead: LeadInput,
+): Promise<void> {
+  const diagnosticId = await ensureDiagnosticRow(client, sessionId, diagnostic);
+  await persistLead(client, diagnosticId, lead);
+}
+
 export interface ContactRequestInput {
   scope: string;
   hasProcessOwner: boolean;
@@ -130,14 +207,12 @@ export interface ContactRequestInput {
   idempotencyKey: string;
 }
 
-/** Grava solicitação de avaliação (idempotente por idempotency_key). */
-export async function persistContactRequest(
+/** Grava a linha de solicitação (idempotente por idempotency_key). */
+export async function persistContactRequestRow(
   client: SupabaseClient,
-  sessionId: string,
-  diagnostic: Diagnostic,
+  diagnosticId: string,
   request: ContactRequestInput,
 ): Promise<void> {
-  const diagnosticId = await ensureDiagnosticRow(client, sessionId, diagnostic);
   await client.from("contact_requests").upsert(
     {
       diagnostic_id: diagnosticId,
@@ -149,6 +224,17 @@ export async function persistContactRequest(
     },
     { onConflict: "idempotency_key", ignoreDuplicates: true },
   );
+}
+
+/** Caminho feliz: diagnóstico válido -> snapshot completo + solicitação. */
+export async function persistContactRequest(
+  client: SupabaseClient,
+  sessionId: string,
+  diagnostic: Diagnostic,
+  request: ContactRequestInput,
+): Promise<void> {
+  const diagnosticId = await ensureDiagnosticRow(client, sessionId, diagnostic);
+  await persistContactRequestRow(client, diagnosticId, request);
 }
 
 /** Grava um evento de produto (sem texto livre nem dado pessoal). */
